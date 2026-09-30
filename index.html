@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plataforma DNPJ - Scouts de Colombia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #efefef; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [user, setUser] = useState(null); // Datos del usuario autenticado
+      const [currentView, setCurrentView] = useState('usuario'); // 'usuario' o 'admin'
+
+      // Simulación de inicio de sesión con Google (Restringido a @scout.org.co)
+      const handleLogin = () => {
+        // AQUÍ SE INTEGRARÁ GOOGLE OAUTH 2.0
+        // Validando que el correo termine en @scout.org.co
+        const mockEmail = prompt("Ingrese su correo institucional (ej. usuario@scout.org.co):");
+        if (mockEmail && mockEmail.endsWith("@scout.org.co")) {
+          setUser({ email: mockEmail, name: mockEmail.split('@')[0] });
+        } else {
+          alert("Acceso denegado. Debe usar una cuenta institucional de @scout.org.co alojada en Gmail.");
+        }
+      };
+
+      const handleLogout = () => {
+        setUser(null);
+      };
+
+      if (!user) {
+        return (
+          <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 p-4">
+            <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center border-t-4 border-[#4d006e]">
+              {/* Logo de la Dirección Nacional de Adultos en el Movimiento */}
+              <img src="logo-dnpj.png" alt="Logo DNPJ" className="mx-auto h-24 mb-6 object-contain" onError={(e)=>{e.target.src='https://via.placeholder.com/150?text=Logo+DNPJ'}} />
+              <h1 className="text-2xl font-bold text-[#4d006e] mb-2">Dirección Nacional de Adultos</h1>
+              <p className="text-gray-600 mb-6 text-sm">Plataforma de gestión en línea conectada con Google Drive</p>
+              
+              <button 
+                onClick={handleLogin}
+                className="w-full bg-[#4d006e] hover:bg-[#3a0053] text-white font-semibold py-3 px-4 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-md">
+                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.24 10.285V14h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.439s3.344-7.439 7.439-7.439c2.329 0 3.89 1.002 4.78 1.849l3.27-3.159C18.22 2.146 15.525 1 12.24 1 6.04 1 1.04 6.04 1.04 12.24s5 11.24 11.2 11.24c6.47 0 10.768-4.553 10.768-10.97 0-.76-.081-1.339-.188-1.925H12.24z"/></svg>
+                Ingresar con Correo Scout (@scout.org.co)
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="min-h-screen bg-gray-100 flex flex-col">
+          {/* Barra de Navegación Moderna */}
+          <header className="bg-[#4d006e] text-white shadow-md">
+            <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+              <div className="flex items-center space-x-3">
+                <img src="logo-dnpj.png" alt="Logo" className="h-10 w-10 object-contain bg-white rounded-full p-1" onError={(e)=>{e.target.src='https://via.placeholder.com/40?text=Logo'}} />
+                <span className="font-bold text-lg hidden sm:inline">DNPJ - Scouts de Colombia</span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <span className="text-sm bg-[#3a0053] px-3 py-1 rounded-full border border-purple-400">
+                  {user.email}
+                </span>
+                <button 
+                  onClick={handleLogout}
+                  className="bg-[#c40f2f] hover:bg-[#a00c26] text-white text-sm px-3 py-1.5 rounded-lg font-medium transition">
+                  Salir
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Selector de Secciones (Usuario / Administrador) */}
+          <nav className="bg-white border-b border-gray-200 shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 flex space-x-8">
+              <button 
+                onClick={() => setCurrentView('usuario')}
+                className={`py-3 px-2 font-medium text-sm border-b-2 transition ${currentView === 'usuario' ? 'border-[#4d006e] text-[#4d006e]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                Sección de Usuario
+              </button>
+              <button 
+                onClick={() => setCurrentView('admin')}
+                className={`py-3 px-2 font-medium text-sm border-b-2 transition ${currentView === 'admin' ? 'border-[#4d006e] text-[#4d006e]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                Sección de Administrador
+              </button>
+            </div>
+          </nav>
+
+          {/* Contenido Dinámico */}
+          <main className="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+            {currentView === 'usuario' ? (
+              <div className="bg-white rounded-xl shadow p-6">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Panel de Usuario</h2>
+                <p className="text-gray-600">Aquí los usuarios podrán gestionar sus actividades y conectarse con Google Drive para almacenar sus archivos en la nube institucional.</p>
+                {/* Espacio para conectar componentes de usuario y Google Drive API */}
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow p-6 border-l-4 border-[#003087]">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Panel de Administrador</h2>
+                <p className="text-gray-600">Aquí la administración podrá revisar registros, permisos y controlar la estructura conectada a Google Drive.</p>
+                {/* Espacio para la gestión de administrador */}
+              </div>
+            )}
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
